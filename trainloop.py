@@ -1,6 +1,7 @@
 import torch
 from my_utils import eta
-from hyperparameters import DEVICE, NUM_EPOCHS
+from hyperparameters import DEVICE, NUM_EPOCHS, LEARNING_RATE_DECAY, AFTER_N_EPOCHS
+from torch.optim import lr_scheduler
 
 
 def train_one_epoch(model, loss_fn, optimizer, dataloader: torch.utils.data.DataLoader, epoch: int):
@@ -24,7 +25,6 @@ def train_one_epoch(model, loss_fn, optimizer, dataloader: torch.utils.data.Data
         eta(epoch, i, NUM_EPOCHS, dataloader)
     return running_loss / len(dataloader)
 
-
 def train_rnn_model(model, loss_fn, optimizer, dataloader: torch.utils.data.DataLoader):
     """
         model: The RNN model
@@ -33,9 +33,11 @@ def train_rnn_model(model, loss_fn, optimizer, dataloader: torch.utils.data.Data
         dataset: The dataset
     """
     model = model.to(DEVICE)
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=AFTER_N_EPOCHS, gamma=LEARNING_RATE_DECAY)
     model.train()
     for epoch in range(NUM_EPOCHS):
         loss = train_one_epoch(model, loss_fn, optimizer, dataloader, epoch)
         print(f'\rEpoch: {epoch + 1}/{NUM_EPOCHS}, Loss: {loss}')
+        scheduler.step()    
 
     return model

@@ -26,7 +26,7 @@ class CharRNN(nn.Module):
         """
             x: The input to the RNN
         """
-        h0 = zeros(self.num_layers, x.size(0), self.hidden_size).to(DEVICE)
+        h0 = self.init_hidden(x.shape[0])
         if len(x.shape) == 2:
             x = x.unsqueeze(0)
 
@@ -42,5 +42,5 @@ class CharRNN(nn.Module):
             batch_size: The batch size
         """
         # The hidden state should be of size (num_layers, batch_size, hidden_size)
-        return zeros(self.num_layers, batch_size, self.hidden_size)
+        return zeros(self.num_layers, batch_size, self.hidden_size).to(DEVICE)
     

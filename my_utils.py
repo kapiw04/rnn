@@ -1,5 +1,6 @@
 import time
 import sys
+import torch
 
 time_start = time.time()
 
@@ -65,3 +66,20 @@ def eta(epoch, i, epochs, dataloader):
     
     sys.stdout.write(f'\rEpoch: {epoch + 1}/{epochs}, Batch: {i + 1}/{total_batches}, ETA: {time_formatted}')
     sys.stdout.flush()
+
+
+def char_tensor(string, vocab):
+    """
+    Converts a string to a tensor of character indices.
+
+    Args:
+        string (str): The input string.
+        vocab (str): The character vocabulary.
+
+    Returns:
+        torch.Tensor: The tensor of character indices.
+    """
+    tensor = torch.zeros(len(string), len(vocab), dtype=torch.float32)
+    for i, char in enumerate(string):
+        tensor[i][char_to_idx(char, vocab)] = 1
+    return tensor

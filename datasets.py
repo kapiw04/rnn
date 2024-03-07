@@ -42,4 +42,4 @@ class CharDataset(Dataset):
         return sequence, nc_tensor
     
 train_dataset = CharDataset(text, SEQUENCE_LEGTH, vocab)
-train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)

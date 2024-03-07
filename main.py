@@ -1,10 +1,10 @@
 import torch
 from models import CharRNN
 from trainloop import train_rnn_model
-from hyperparameters import HIDDEN_SIZE, NUM_LAYERS, DROPOUT_RATE, LEARNING_RATE, MOMENTUM
+from hyperparameters import HIDDEN_SIZE, NUM_LAYERS, DROPOUT_RATE, LEARNING_RATE, DEVICE
 from datasets import train_dataloader, vocab_length
 
-model = CharRNN(input_size=vocab_length, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYERS, dropout_rate=DROPOUT_RATE)
+model = CharRNN(input_size=vocab_length, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYERS, dropout_rate=DROPOUT_RATE).to(DEVICE)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 loss_fn = torch.nn.CrossEntropyLoss()
