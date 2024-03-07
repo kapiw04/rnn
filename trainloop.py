@@ -1,7 +1,8 @@
 import torch
-from my_utils import eta
+from my_utils import eta, save_model
 from hyperparameters import DEVICE, NUM_EPOCHS, LEARNING_RATE_DECAY, AFTER_N_EPOCHS
 from torch.optim import lr_scheduler
+
 
 
 def train_one_epoch(model, loss_fn, optimizer, dataloader: torch.utils.data.DataLoader, epoch: int):
@@ -39,5 +40,6 @@ def train_rnn_model(model, loss_fn, optimizer, dataloader: torch.utils.data.Data
         loss = train_one_epoch(model, loss_fn, optimizer, dataloader, epoch)
         print(f'\rEpoch: {epoch + 1}/{NUM_EPOCHS}, Loss: {loss}')
         scheduler.step()    
+        save_model(model, 'rnn.pth')
 
     return model

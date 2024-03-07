@@ -11,7 +11,7 @@ def char_to_idx(char, vocab):
 def idx_to_char(idx, vocab):
     return vocab[idx]
 
-def format_eta(seconds, include_hours=False):
+def format_eta(seconds):
     """
     Formats the ETA in a human-readable form.
 
@@ -22,12 +22,16 @@ def format_eta(seconds, include_hours=False):
     Returns:
         str: The formatted ETA.
     """
+    include_hours = seconds >= 3600
+    include_days = seconds >= 86400
+    if include_days:
+        return time.strftime('%jd %Hh %Mm %Ss', time.gmtime(seconds))
     if include_hours:
         return time.strftime('%Hh %Mm %Ss', time.gmtime(seconds))
     else:
         return time.strftime('%Mm %Ss', time.gmtime(seconds))
 
-def calculate_eta(time_start, i, total_batches, epochs_remaining):
+def calculate_eta(time_start, i, total_batches, epochs_remaining, epoch):
     """
     Calculates the estimated time of arrival (completion).
 
@@ -41,7 +45,7 @@ def calculate_eta(time_start, i, total_batches, epochs_remaining):
         float: The ETA in seconds.
     """
     time_end = time.time()
-    avg_time_per_batch = (time_end - time_start) / (i + 1)
+    avg_time_per_batch = (time_end - time_start) / (i + 1 + (epoch * total_batches))
     time_to_finish_current_epoch = avg_time_per_batch * (total_batches - (i + 1))
     time_for_remaining_epochs = avg_time_per_batch * total_batches * epochs_remaining
     return time_to_finish_current_epoch + time_for_remaining_epochs
@@ -60,9 +64,8 @@ def eta(epoch, i, epochs, dataloader):
     global time_start
     epochs_remaining = epochs - epoch - 1
     total_batches = len(dataloader)
-    eta_seconds = calculate_eta(time_start, i, total_batches, epochs_remaining)
-    include_hours = eta_seconds >= 3600
-    time_formatted = format_eta(eta_seconds, include_hours=include_hours)
+    eta_seconds = calculate_eta(time_start, i, total_batches, epochs_remaining, epoch)
+    time_formatted = format_eta(eta_seconds)
     
     sys.stdout.write(f'\rEpoch: {epoch + 1}/{epochs}, Batch: {i + 1}/{total_batches}, ETA: {time_formatted}')
     sys.stdout.flush()
@@ -83,3 +86,24 @@ def char_tensor(string, vocab):
     for i, char in enumerate(string):
         tensor[i][char_to_idx(char, vocab)] = 1
     return tensor
+
+
+def save_model(model, path):
+    """
+    Saves the model to a file.
+
+    Args:
+        model (torch.nn.Module): The model to save.
+        path (str): The file path to save the model to.
+    """
+    torch.save(model.state_dict(), path)
+
+def load_model(model, path):
+    """
+    Loads the model from a file.
+
+    Args:
+        model (torch.nn.Module): The model to load the parameters into.
+        path (str): The file path to load the model from.
+    """
+    model.load_state_dict(torch.load(path))
