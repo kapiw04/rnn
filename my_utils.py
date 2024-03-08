@@ -107,3 +107,18 @@ def load_model(model, path):
         path (str): The file path to load the model from.
     """
     model.load_state_dict(torch.load(path))
+
+
+def tensor_to_str(tensor, vocab):
+    """
+    Converts a tensor of character indices to a string.
+
+    Args:
+        tensor (torch.Tensor): The tensor of character indices.
+
+    Returns:
+        str: The string representation of the tensor.
+    """
+    # torch.multinomial(torch.exp(prediction / temperature), 1) 
+
+    return ''.join([idx_to_char(torch.argmax(tensor[i]).item(), vocab) for i in range(tensor.shape[0])])
