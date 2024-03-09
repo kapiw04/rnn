@@ -5,3 +5,4 @@ __pycache__/hyperparameters.cpython-310.pyc
 __pycache__/models.cpython-310.pyc
 __pycache__/my_utils.cpython-310.pyc
 __pycache__/trainloop.cpython-310.pyc
+rnn-*
